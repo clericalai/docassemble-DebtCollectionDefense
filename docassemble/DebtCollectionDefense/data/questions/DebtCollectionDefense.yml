@@ -1,0 +1,268 @@
+code: multi_user = True
+mandatory: True
+---
+sections:
+  - About You
+  - About Debt Collector
+  - Forms of Contact
+  - Requests
+  - Final Questions
+---
+features:
+  question back button: True
+  navigation back button: False
+---
+metadata:
+  short title: Debt Collection Final
+  title: Debt Collection Final
+---
+features:
+  css: >-
+    https://s3-us-west-1.amazonaws.com/hsldocassemble/assets/docassemble-ui-interview.css
+---
+modules:
+  - docassemble.base.util
+---
+continue button label: Save & Continue
+field: hsl_field_7182298552
+mandatory: 'True'
+question: This interview will help you respond to communications from a debt collector.
+subquestion: |
+  _HelpSelf Legal is an online service that provides legal forms and legal information. We are not a law firm and are not a substitute for an attorney’s advice. Use of this website is subject to our Terms of Service and Privacy Policy._
+  
+  
+  Press "Continue" to start the interview.
+---
+continue button label: Save & Continue
+fields:
+  - 'Your full name:': debtorname
+    datatype: text
+  - 'Your street address:': debtorstreetaddress
+    datatype: text
+  - 'City:': debtorcity
+    datatype: text
+  - 'State:': debtorstate
+    datatype: text
+  - 'Zip Code:': debtorzip
+    datatype: text
+mandatory: 'True'
+question: 'First, tell us about yourself:'
+section: About You
+---
+continue button label: Save & Continue
+fields:
+  - 'Debt collector''s name and/or company name:': debtcollectorname
+    datatype: text
+  - 'Debt collector''s address:': debtcollectorstreetaddress
+    datatype: text
+  - 'City:': debtcollectorcity
+    datatype: text
+  - State: debtcollectorstate
+    datatype: text
+  - Zip Code: debtcollectorzip
+    datatype: number
+  - 'Your account number for any debt (_this may be written on the letter_):': debtaccountnumber
+    datatype: text
+mandatory: 'True'
+question: 'Now, look at the communication for information about the debt collector:'
+section: About Debt Collector
+---
+continue button label: Save & Continue
+fields:
+  - When did the debt collector contact you?: communicationdate
+    datatype: date
+mandatory: 'True'
+question: Communication from Debt Collector
+section: About Debt Collector
+---
+continue button label: Save & Continue
+fields:
+  - 'Do you want the debt collector to:': differentcontact
+    choices:
+      - 'Contact you at a different address, phone number, or time': Contact_you_at_a_different_address__phone_number__or_time
+      - Contact your lawyer directly (instead of you): Contact_your_lawyer_directly__instead_of_you_
+      - None of the above: None_of_the_above
+    datatype: radio
+  - What is your lawyer's name?: lawyername
+    datatype: text
+    show if:
+      is: Contact_your_lawyer_directly__instead_of_you_
+      variable: differentcontact
+  - What is your lawyer's street address?: lawyerstreetaddress
+    datatype: text
+    show if:
+      is: Contact_your_lawyer_directly__instead_of_you_
+      variable: differentcontact
+  - 'What is your lawyer''s city, state, and zip code?': lawyercitystatezip
+    datatype: text
+    show if:
+      is: Contact_your_lawyer_directly__instead_of_you_
+      variable: differentcontact
+  - What is the full mailing address where you want to be contacted?: mailingaddressformail
+    datatype: text
+    show if:
+      is: Contact_you_at_a_different_address__phone_number__or_time
+      variable: differentcontact
+  - What phone number do you want to be contacted at? (*if any*): phonenumber
+    datatype: text
+    show if:
+      is: Contact_you_at_a_different_address__phone_number__or_time
+      variable: differentcontact
+  - What times of day do you want to be contacted? (*if any*): convenientcalltimes
+    datatype: text
+    show if:
+      is: Contact_you_at_a_different_address__phone_number__or_time
+      variable: differentcontact
+mandatory: 'True'
+question: Forms of Contact
+section: Forms of Contact
+---
+code: |
+  needsmoreinformation = False
+---
+if: |
+  differentcontact == "None_of_the_above" or differentcontact == "Contact_you_at_a_different_address__phone_number__or_time"
+continue button label: Save & Continue
+fields:
+  - Do you want to ask for more information about the debt?: needsmoreinformation
+    datatype: yesnoradio
+  - note: >-
+      #Review the letter, and identify all information that is not in the
+      letter.
+    show if:
+      is: 'True'
+      variable: needsmoreinformation
+  - Do you need information about why and to whom you owe the debt?: needsmoreinformationwhywho
+    datatype: yesnoradio
+    show if:
+      is: 'True'
+      variable: needsmoreinformation
+  - 'Do you need information about the amount, due date, and time of the debt': needsmoreinformationamountage
+    datatype: yesnoradio
+    show if:
+      is: 'True'
+      variable: needsmoreinformation
+  - Do you need information about the debt collector's authority to collect the debt: 'needsmoreinformationauthority '
+    datatype: yesnoradio
+    show if:
+      is: 'True'
+      variable: needsmoreinformation
+question: Asking for more information
+section: Requests
+---
+code: |
+  disputesdebt = False
+---
+if: |
+  differentcontact == "None_of_the_above" or differentcontact == "Contact_you_at_a_different_address__phone_number__or_time"
+continue button label: Save & Continue
+fields:
+  - datatype: yesnoradio
+    no label: disputesdebt
+question: Do you want to dispute that you owe the debt?
+section: Requests
+---
+code: |
+  wantstonegotiate = False
+---
+if: |
+  differentcontact == "None_of_the_above" or differentcontact == "Contact_you_at_a_different_address__phone_number__or_time"
+continue button label: Save & Continue
+fields:
+  - datatype: yesnoradio
+    no label: wantstonegotiate
+question: Do you want to ask to negotiate the debt?
+section: Requests
+---
+code: |
+  stopcommunications = False
+---
+if: |
+  wantstonegotiate is False and disputesdebt is False and needsmoreinformation is False and differentcontact == "None_of_the_above"
+continue button label: Save & Continue
+fields:
+  - Do you want the debt collector to stop contacting you?: stopcommunications
+    datatype: yesnoradio
+question: >-
+  You can ask the debt collector to stop contacting you.  *But remember, this
+  will not prevent them from bringing a lawsuit or taking other actions*
+section: Requests
+---
+continue button label: Save & Continue
+fields:
+  - "Lie to you. For example, they cannot lie to you about who they are or how much you owe, or say that they are going to sue you when they have no intention of doing so\n\nImply that you can go to jail for not paying a debt\n\nPretend to be calling from the police or the IRS\n\nUse or threaten use of physical force\n\nCall a failure to pay a debt a “crime” or threaten to have you arrested\n\nUse obscene/profane language\n\nCall repeatedly\n\nCall too early or too late: before 8am or after 9pm\n\nIf you tell collectors not to contact you at work they must stop calls to your workplace.\n": otherinformationaboutdebt
+    datatype: yesnoradio
+  - '###Type the information to the debt collector here:': otherinformationaboutdebtnarrative
+    datatype: area
+    show if:
+      is: 'True'
+      variable: otherinformationaboutdebt
+need: 
+  - stopcommunications
+  - needsmoreinformation
+  - disputesdebt
+question: >-
+  Is there anything else you want to write in the letter? For example, debt
+  collectors cannot do any of the following things.  If they have, describe
+  them.
+section: Requests
+---
+need: 
+  - wantstonegotiate
+  - otherinformationaboutdebt
+  - disputesdebt
+continue button label: Save & Continue
+fields:
+  - What date do you want to sign the letter?: date
+    datatype: date
+question: Signature Date
+section: Final Questions
+---
+need: date
+continue button label: Save & Continue
+question: Sign your letter to the debt collector here.
+signature: signature
+section: Final Questions
+---
+question: Mailing Your Documents
+need: signature
+mandatory: true
+continue button label: Save & Continue
+fields:
+  - 'Do you want HelpSelf to send your documents to the debt collector?': wantshelpselftofile
+    datatype: yesnoradio
+  - 'You can serve your documents yourself, but if you want us to, we charge $10 to cover our costs.  Click **I Understand** when you have paid at [this link](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VLJPCZVYE4834)': paidthefeesandstuff
+    choices:
+      -  I understand: I_understand
+    none of the above: false
+    datatype: checkboxes
+    show if:
+      is: True
+      variable: wantshelpselftofile
+---
+attachment:
+  docx template file: ConsumerDebtLetter_-_No_Contact.docx
+  filename: ConsumerDebtLetter No Contact
+  name: ConsumerDebtLetter No Contact
+  variable name: ConsumerDebtLetter_No_Contact
+---
+attachment:
+  docx template file: ConsumerDebtLetter_-_Request_Information.docx
+  filename: ConsumerDebtLetter Request Information
+  name: ConsumerDebtLetter Request Information
+  variable name: ConsumerDebtLetter_Request_Information
+---
+code: |-
+  #hslPreAttachment
+  if stopcommunications == True:
+    hsl_attachments = [ConsumerDebtLetter_No_Contact]
+  elif differentcontact == 'Contact_your_lawyer_directly__instead_of_you_':
+    hsl_attachments = [ConsumerDebtLetter_No_Contact]
+  elif stopcommunications == False:
+    hsl_attachments = [ConsumerDebtLetter_Request_Information]
+  else:
+    [ConsumerDebtLetter_No_Contact,ConsumerDebtLetter_Request_Information]
+---
+attachment code: hsl_attachments
+mandatory: 'True'
+question: Here are your documents!
